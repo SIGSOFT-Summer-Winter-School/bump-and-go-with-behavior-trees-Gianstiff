@@ -36,27 +36,33 @@ IsObstacle::IsObstacle(
   config().blackboard->get("node", node_);
 
   // Complete here: Initialize laser_sub_ subscribing to /input_scan
+  laser_sub_ = node_->create_subscription<sensor_msgs::msg::LaserScan>(
+    "/input_scan", 10,
+    std::bind(&IsObstacle::laser_callback, this, _1));
 }
 
 void
 IsObstacle::laser_callback(sensor_msgs::msg::LaserScan::UniquePtr msg)
 {
-  // Complete here: Store last_scan_
+  last_scan_ = std::move(msg);
 }
 
 BT::NodeStatus
 IsObstacle::tick()
 {
-  if(last_scan_==nullptr)
-  {
+  if (last_scan_ == nullptr) {
     return BT::NodeStatus::FAILURE;
   }
 
-  double distance =1.0;
-  getInput("distance",distance);
+  double distance = 1.0;
+  getInput("distance", distance);
+
+  bool obstacle = last_scan_->ranges[last_scan_->ranges.size() / 2] < distance;
 
   // Complete here: Return SUCCESS if there is an obstacle
-
+  if (obstacle) {
+    return BT::NodeStatus::SUCCESS;
+  }
   return BT::NodeStatus::FAILURE;
 }
 

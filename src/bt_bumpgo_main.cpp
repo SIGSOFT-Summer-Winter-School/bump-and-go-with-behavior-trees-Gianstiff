@@ -25,7 +25,8 @@
 #include "rclcpp/rclcpp.hpp"
 
 
-int main(int argc, char* argv[]){
+int main(int argc, char * argv[])
+{
   rclcpp::init(argc, argv);
 
   auto node = rclcpp::Node::make_shared("patrolling_node");
@@ -38,20 +39,19 @@ int main(int argc, char* argv[]){
   factory.registerFromPlugin(loader.getOSName("br2_turn_bt_node"));
   factory.registerFromPlugin(loader.getOSName("br2_is_obstacle_bt_node"));
 
-  std::string pkgpath=ament_index_cpp::get_package_share_directory("bt_bumpgo");
-  std::string xml_file=pkgpath+ "/behavior_tree_xml/bumpgo.xml";
+  std::string pkgpath = ament_index_cpp::get_package_share_directory("bt_bumpgo");
+  std::string xml_file = pkgpath + "/behavior_tree_xml/bumpgo.xml";
 
-  auto blackboard=BT::Blackboard::create();
+  auto blackboard = BT::Blackboard::create();
   blackboard->set("node", node);
-  BT::Tree tree = factory.createTreeFromFile(xml_file,blackboard);
+  BT::Tree tree = factory.createTreeFromFile(xml_file, blackboard);
 
-  auto publisher_zmq = std::make_shared<BT::PublisherZMQ>(tree, 10, 1666,1667);
+  auto publisher_zmq = std::make_shared<BT::PublisherZMQ>(tree, 10, 1666, 1667);
 
   rclcpp::Rate rate(10);
 
-  bool finish =false;
-  while (!finish&&rclcpp::ok())
-  {
+  bool finish = false;
+  while (!finish && rclcpp::ok()) {
     finish = tree.rootNode()->executeTick() != BT::NodeStatus::RUNNING;
 
     rclcpp::spin_some(node);

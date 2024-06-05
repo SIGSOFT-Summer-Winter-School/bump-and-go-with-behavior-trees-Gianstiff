@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef ISOBSTACLE_
-#define ISOBSTACLE_
+#ifndef BT_BUMPGO__ISOBSTACLE_HPP_
+#define BT_BUMPGO__ISOBSTACLE_HPP_
 
 #include <string>
 
@@ -35,19 +35,20 @@ public:
 
   BT::NodeStatus tick();
 
-  static BT::PortsList providedPorts() {
+  static BT::PortsList providedPorts()
+  {
     return BT::PortsList(
       {BT::InputPort<double>("distance")});
   }
 
-  void laser_callback(sensor_msgs::msg::LaserScan::UniquePtr msg); 
- 
+  void laser_callback(sensor_msgs::msg::LaserScan::UniquePtr msg);
+
 private:
   rclcpp::Node::SharedPtr node_;
   rclcpp::Subscription<sensor_msgs::msg::LaserScan>::SharedPtr laser_sub_;
   sensor_msgs::msg::LaserScan::UniquePtr last_scan_;
 };
 
-} 
+}  // namespace bt_bumpgo
 
-#endif  // ISOBSTACLE_
+#endif  // BT_BUMPGO__ISOBSTACLE_HPP_
